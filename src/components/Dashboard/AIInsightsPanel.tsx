@@ -8,9 +8,11 @@
 // ============================================================
 
 import { memo, useState, useEffect, useCallback } from 'react';
+
+import type { RoutineInsightReport } from '@/types';
+
 import { useApp } from '@/context/AppContext';
 import { airApiService } from '@/services/airApiService';
-import type { RoutineInsightReport } from '@/types';
 
 export const AIInsightsPanel = memo(function AIInsightsPanel() {
   const { userProfile, selectedSector } = useApp();
@@ -18,23 +20,36 @@ export const AIInsightsPanel = memo(function AIInsightsPanel() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSchedule = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await airApiService.generateRoutineSchedule(userProfile, selectedSector);
-      setReport(data);
-    } catch (err) {
-      setError('Unable to fetch GenAI routine optimization. Using deterministic fallback.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [userProfile, selectedSector]);
+  const fetchSchedule = useCallback(
+    async (isMounted?: () => boolean) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await airApiService.generateRoutineSchedule(userProfile, selectedSector);
+        if (!isMounted || isMounted()) {
+          setReport(data);
+        }
+      } catch (err) {
+        if (!isMounted || isMounted()) {
+          setError('Unable to fetch GenAI routine optimization. Using deterministic fallback.');
+        }
+        console.error(err);
+      } finally {
+        if (!isMounted || isMounted()) {
+          setLoading(false);
+        }
+      }
+    },
+    [userProfile, selectedSector]
+  );
 
   // Initial load on mount or when sector/persona changes
   useEffect(() => {
-    void fetchSchedule();
+    let mounted = true;
+    void fetchSchedule(() => mounted);
+    return () => {
+      mounted = false;
+    };
   }, [fetchSchedule]);
 
   return (
@@ -61,7 +76,7 @@ export const AIInsightsPanel = memo(function AIInsightsPanel() {
 
         <button
           type="button"
-          onClick={fetchSchedule}
+          onClick={() => void fetchSchedule()}
           disabled={loading}
           className="self-end sm:self-center px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-950/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >

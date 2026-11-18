@@ -5,9 +5,12 @@
 // ============================================================
 
 import { useMemo } from 'react';
+
+import type { PollutantMeasurement, SectorData } from '@/types';
+
+import { PollutantType } from '@/types';
 import { useApp } from '@/context/AppContext';
 import { computeAQICategory, computePM25SubIndex } from '@/lib/airCompute';
-import { PollutantType, type PollutantMeasurement, type SectorData } from '@/types';
 
 export interface AirAnalyticsSummary {
   selectedSector: SectorData;

@@ -6,6 +6,7 @@
 // ============================================================
 
 import { memo } from 'react';
+
 import { useApp } from '@/context/AppContext';
 
 export const AlertBanner = memo(function AlertBanner() {

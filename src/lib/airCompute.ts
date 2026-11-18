@@ -6,13 +6,14 @@
 //             CADR equations, and Dijkstra Lowest-Exposure Pathfinding
 // ============================================================
 
-import {
-  AQICategory,
-  type TransitMode,
-  type GraphEdge,
-  type CADRCalculationResult,
-  type SectorData,
+import type {
+  TransitMode,
+  GraphEdge,
+  CADRCalculationResult,
+  SectorData,
 } from '@/types';
+
+import { AQICategory } from '@/types';
 
 /**
  * Maps numerical AQI index to EPA/WHO health category.

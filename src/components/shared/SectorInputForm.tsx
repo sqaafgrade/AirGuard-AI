@@ -6,8 +6,10 @@
 // ============================================================
 
 import { memo } from 'react';
-import { useApp } from '@/context/AppContext';
+
 import type { PersonaType } from '@/types';
+
+import { useApp } from '@/context/AppContext';
 
 export const SectorInputForm = memo(function SectorInputForm() {
   const { sectors, selectedSectorId, setSelectedSectorId, userProfile, updateUserProfile } = useApp();

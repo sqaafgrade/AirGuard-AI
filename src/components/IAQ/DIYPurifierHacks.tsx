@@ -5,6 +5,7 @@
 // ============================================================
 
 import { memo, useState } from 'react';
+
 import type { DIYHack } from '@/types';
 
 export const DIY_HACKS_DATA: DIYHack[] = [

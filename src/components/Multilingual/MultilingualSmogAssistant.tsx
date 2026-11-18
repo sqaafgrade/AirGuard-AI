@@ -6,9 +6,11 @@
 // ============================================================
 
 import { memo, useState, useEffect, useCallback } from 'react';
+
+import type { LanguageCode, TranslationAdvisory } from '@/types';
+
 import { useApp } from '@/context/AppContext';
 import { airApiService } from '@/services/airApiService';
-import type { LanguageCode, TranslationAdvisory } from '@/types';
 
 const LANGUAGES: { code: LanguageCode; name: string; nativeName: string; isRtl: boolean }[] = [
   { code: 'en', name: 'English', nativeName: 'English', isRtl: false },
@@ -26,20 +28,33 @@ export const MultilingualSmogAssistant = memo(function MultilingualSmogAssistant
 
   const isRtl = language === 'ar' || language === 'ur';
 
-  const fetchTranslation = useCallback(async (lang: LanguageCode) => {
-    setLoading(true);
-    try {
-      const data = await airApiService.getEmergencyTranslation(lang, selectedSector);
-      setAdvisory(data);
-    } catch (err) {
-      console.error('Translation retrieval error:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedSector]);
+  const fetchTranslation = useCallback(
+    async (lang: LanguageCode, isMounted?: () => boolean) => {
+      setLoading(true);
+      try {
+        const data = await airApiService.getEmergencyTranslation(lang, selectedSector);
+        if (!isMounted || isMounted()) {
+          setAdvisory(data);
+        }
+      } catch (err) {
+        if (!isMounted || isMounted()) {
+          console.error('Translation retrieval error:', err);
+        }
+      } finally {
+        if (!isMounted || isMounted()) {
+          setLoading(false);
+        }
+      }
+    },
+    [selectedSector]
+  );
 
   useEffect(() => {
-    void fetchTranslation(language);
+    let mounted = true;
+    void fetchTranslation(language, () => mounted);
+    return () => {
+      mounted = false;
+    };
   }, [language, fetchTranslation]);
 
   return (

@@ -4,8 +4,11 @@
 // Per ARCHITECTURE-PATTERNS.md: Thin context, typed dispatchers
 // ============================================================
 
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
-import { AQICategory, type SectorData, type UserProfile, type TabId, type LanguageCode } from '@/types';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, type ReactNode } from 'react';
+
+import type { SectorData, UserProfile, TabId, LanguageCode } from '@/types';
+
+import { AQICategory } from '@/types';
 import { DEFAULT_SECTORS } from '@/lib/airCompute';
 import { storageService, DEFAULT_USER_PROFILE } from '@/services/storageService';
 
@@ -30,7 +33,7 @@ export interface AppContextType {
 
 const AppContext = createContext<AppContextType | null>(null);
 
-export function AppContextProvider({ children }: { children: React.ReactNode }) {
+export function AppContextProvider({ children }: { children: ReactNode }) {
   const [activeTab, setActiveTabState] = useState<TabId>('telemetry');
   const [sectors, setSectors] = useState<SectorData[]>(DEFAULT_SECTORS);
   const [selectedSectorId, setSelectedSectorId] = useState<string>('SEC-01');

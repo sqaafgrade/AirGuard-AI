@@ -7,10 +7,13 @@
 // ============================================================
 
 import { memo } from 'react';
-import { useAirAnalytics } from '@/hooks/useAirAnalytics';
-import { AQICategory, type PollutantMeasurement } from '@/types';
 
-function Sparkline({ values, color }: { values: number[]; color: string }) {
+import type { PollutantMeasurement } from '@/types';
+
+import { AQICategory } from '@/types';
+import { useAirAnalytics } from '@/hooks/useAirAnalytics';
+
+const Sparkline = memo(function Sparkline({ values, color }: { values: number[]; color: string }) {
   const W = 160;
   const H = 36;
   const max = Math.max(...values, 1);
@@ -40,7 +43,7 @@ function Sparkline({ values, color }: { values: number[]; color: string }) {
       ))}
     </svg>
   );
-}
+});
 
 function getStatusBadge(status: AQICategory) {
   switch (status) {

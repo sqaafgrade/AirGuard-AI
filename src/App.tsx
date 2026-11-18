@@ -6,6 +6,9 @@
 // ============================================================
 
 import { memo } from 'react';
+
+import type { TabId } from '@/types';
+
 import { AppContextProvider, useApp } from '@/context/AppContext';
 import { AlertBanner } from '@/components/shared/AlertBanner';
 import { SectorInputForm } from '@/components/shared/SectorInputForm';
@@ -18,7 +21,6 @@ import { DIYPurifierHacks } from '@/components/IAQ/DIYPurifierHacks';
 import { EmissionPledges } from '@/components/Community/EmissionPledges';
 import { VolunteerWatch } from '@/components/Community/VolunteerWatch';
 import { MultilingualSmogAssistant } from '@/components/Multilingual/MultilingualSmogAssistant';
-import type { TabId } from '@/types';
 
 interface TabDefinition {
   id: TabId;

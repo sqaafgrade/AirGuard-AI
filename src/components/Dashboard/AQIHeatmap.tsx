@@ -7,8 +7,10 @@
 // ============================================================
 
 import { memo } from 'react';
-import { useApp } from '@/context/AppContext';
+
 import type { SectorData } from '@/types';
+
+import { useApp } from '@/context/AppContext';
 
 function getCategoryColor(aqi: number): { fill: string; stroke: string; text: string; bg: string } {
   if (aqi <= 50) return { fill: '#10b981', stroke: '#34d399', text: 'text-emerald-400', bg: 'bg-emerald-950/40 border-emerald-500/40' };

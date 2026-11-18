@@ -6,8 +6,9 @@
 // ============================================================
 
 import { memo, useState, useMemo } from 'react';
-import { calculateCADR } from '@/lib/airCompute';
+
 import { useApp } from '@/context/AppContext';
+import { calculateCADR } from '@/lib/airCompute';
 
 export const CADRCalculator = memo(function CADRCalculator() {
   const { selectedSector } = useApp();

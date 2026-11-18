@@ -5,9 +5,11 @@
 // ============================================================
 
 import { memo, useState, useCallback } from 'react';
+
+import type { SmogIncidentReport } from '@/types';
+
 import { useApp } from '@/context/AppContext';
 import { storageService } from '@/services/storageService';
-import type { SmogIncidentReport } from '@/types';
 
 interface VulnerableResident {
   id: string;

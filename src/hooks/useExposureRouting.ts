@@ -5,13 +5,15 @@
 // ============================================================
 
 import { useState, useMemo, useCallback } from 'react';
+
+import type { TransitMode, RouteOption, TurnByTurnStep } from '@/types';
+
 import {
   CITY_TRANSIT_GRAPH,
   dijkstraLowestExposure,
   calculateInhaledDose,
   TRANSIT_EXPOSURE_FACTORS,
 } from '@/lib/airCompute';
-import type { TransitMode, RouteOption, TurnByTurnStep } from '@/types';
 
 export interface UseExposureRoutingReturn {
   startNode: string;

@@ -11,13 +11,14 @@
 // - Express 5 named wildcard catch-all (*splat)
 // ============================================================
 
-import express, { Request, Response, NextFunction } from 'express';
-import helmet from 'helmet';
-import cors from 'cors';
-import rateLimit from 'express-rate-limit';
 import { createHash } from 'crypto';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+import express, { type Request, type Response, type NextFunction } from 'express';
+import helmet from 'helmet';
+import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 
 dotenv.config();

@@ -5,10 +5,12 @@
 // ============================================================
 
 import { memo, useState, useMemo, useCallback } from 'react';
+
+import type { CommunityPledge } from '@/types';
+
 import { useApp } from '@/context/AppContext';
 import { calculatePledgeEmissionSavings } from '@/lib/airCompute';
 import { storageService } from '@/services/storageService';
-import type { CommunityPledge } from '@/types';
 
 const INITIAL_COMMUNITY_PLEDGES: CommunityPledge[] = [
   {
