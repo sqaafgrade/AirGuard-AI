@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+:root {
+  --color-airguard-bg: #020817;
+  --color-airguard-surface: #0f172a;
+  --color-airguard-green: #10b981;
+  --color-airguard-blue: #0ea5e9;
+  --color-airguard-amber: #f59e0b;
+  --color-airguard-red: #ef4444;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #020817;
+  color: #f1f5f9;
+  overflow-x: hidden;
+}
+
+/* RTL Typography */
+[dir="rtl"], .font-arabic {
+  font-family: 'Noto Sans Arabic', 'Tahoma', system-ui, sans-serif;
+}
+
+/* Glassmorphism Surface */
+.glass-card {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 1rem;
+}
+
+/* High-Contrast Accessible Focus Rings (WCAG 2.2 AA) */
+:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+/* Subtle Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #020817;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}

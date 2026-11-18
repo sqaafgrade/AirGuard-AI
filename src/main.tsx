@@ -1,0 +1,15 @@
+// ============================================================
+// src/main.tsx
+// Application entry point for AirGuard AI
+// ============================================================
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
