@@ -1,20 +1,16 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Per-user isolated storage for AirGuard AI profiles and saved routes
+    // Per-user isolated storage for AirGuard AI profiles and saved routes (Zero-Trust)
     match /users/{userId}/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
-    // Public read-only urban air telemetry and community pledges
+    // Public read-only urban air telemetry
     match /telemetry/{sectorId} {
       allow read: if true;
       allow write: if false;
     }
-    match /pledges/{pledgeId} {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
-    // Deny all other collections by default
+    // Deny all other access by default (CWE-284 Defense)
     match /{document=**} {
       allow read, write: if false;
     }

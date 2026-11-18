@@ -30,6 +30,12 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
 
+// Hardened Reverse-Proxy Trust for Cloud Deployments (Render / Cloudflare)
+app.set('trust proxy', 1);
+
+// Disable Information Disclosure Header (CWE-200)
+app.disable('x-powered-by');
+
 // ------------------------------------------------------------
 // 1. Defensive Perimeter Middleware
 // ------------------------------------------------------------
@@ -391,6 +397,7 @@ app.post('/api/translate', aiRateLimiter, async (req: Request, res: Response) =>
       return res.status(400).json({ error: 'Invalid language or sector payload.' });
     }
 
+    const sanitizedSector = sanitizeText(sector.sectorName, 50);
     const cacheKey = `trans:${language}:${sector.sectorId}:${sector.aqi}`;
     const cached = insightCache.get(cacheKey);
     if (cached) {
@@ -398,7 +405,7 @@ app.post('/api/translate', aiRateLimiter, async (req: Request, res: Response) =>
     }
 
     const prompt = `
-Translate this winter smog emergency advisory for Sector ${sector.sectorName} (AQI: ${sector.aqi}) into language '${language}'.
+Translate this winter smog emergency advisory for Sector ${sanitizedSector} (AQI: ${sector.aqi}) into language '${language}'.
 Output a JSON object with:
 {
   "language": "${language}",

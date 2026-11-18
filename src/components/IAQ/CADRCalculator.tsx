@@ -7,8 +7,10 @@
 
 import { memo, useState, useMemo } from 'react';
 import { calculateCADR } from '@/lib/airCompute';
+import { useApp } from '@/context/AppContext';
 
 export const CADRCalculator = memo(function CADRCalculator() {
+  const { selectedSector } = useApp();
   const [roomName, setRoomName] = useState<string>('Master Bedroom');
   const [lengthFt, setLengthFt] = useState<number>(16);
   const [widthFt, setWidthFt] = useState<number>(14);
@@ -204,6 +206,53 @@ export const CADRCalculator = memo(function CADRCalculator() {
         <span className="text-xs font-black px-2.5 py-1 rounded bg-slate-800 text-sky-300 shrink-0">
           Status: {cadrResult.status}
         </span>
+      </div>
+
+      {/* Dynamic Window-Ventilation Schedule (Outdoor AQI Trend Calibrated) */}
+      <div className="bg-slate-950/50 rounded-xl border border-slate-800 p-4 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-base" aria-hidden="true">🪟</span>
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+              Dynamic Window-Ventilation Schedule ({selectedSector.sectorName})
+            </h3>
+          </div>
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+            Current Outdoor AQI: {selectedSector.aqi}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 text-xs">
+          <div className="bg-red-950/20 border border-red-500/30 rounded-lg p-3">
+            <div className="flex items-center justify-between mb-1">
+              <span className="font-bold text-red-400">06:00 - 10:30</span>
+              <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-red-950 text-red-300">🛑 SEALED</span>
+            </div>
+            <p className="text-[11px] text-slate-300">
+              Morning thermal inversion cap traps night-time smoke and vehicle emissions below 150m. Keep all windows tightly sealed.
+            </p>
+          </div>
+
+          <div className="bg-emerald-950/20 border border-emerald-500/30 rounded-lg p-3">
+            <div className="flex items-center justify-between mb-1">
+              <span className="font-bold text-emerald-400">11:30 - 14:00</span>
+              <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300">✅ 15-MIN FLUSH</span>
+            </div>
+            <p className="text-[11px] text-slate-300">
+              Solar heating lifts boundary layer. Safe for 15-minute cross-ventilation to purge indoor CO2 and cooking moisture.
+            </p>
+          </div>
+
+          <div className="bg-amber-950/20 border border-amber-500/30 rounded-lg p-3">
+            <div className="flex items-center justify-between mb-1">
+              <span className="font-bold text-amber-400">17:00 - 22:00</span>
+              <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-amber-950 text-amber-300">🛑 SEALED</span>
+            </div>
+            <p className="text-[11px] text-slate-300">
+              Evening temperature inversion descent concentrates rush-hour traffic soot at breathing level. Turn on indoor DIY purifiers.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );

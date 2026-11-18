@@ -44,17 +44,9 @@ export function useAirAnalytics(): AirAnalyticsSummary {
     const pm25Sub = computePM25SubIndex(s.pm25);
 
     // Deterministic 8-point 24h sparklines derived from current readings
-    const generateSparkline = (current: number, variance: number) => {
-      return [
-        Math.max(current * 1.35, 10),
-        Math.max(current * 1.45, 12),
-        Math.max(current * 1.25, 10),
-        Math.max(current * 0.9, 8),
-        Math.max(current * 0.7, 6),
-        Math.max(current * 0.75, 6),
-        Math.max(current * 0.95, 8),
-        current,
-      ].map(v => Math.round(v + (Math.random() * variance - variance / 2)));
+    const generateSparkline = (current: number) => {
+      const multipliers = [1.35, 1.45, 1.25, 0.9, 0.7, 0.75, 0.95, 1.0];
+      return multipliers.map(m => Math.max(Math.round(current * m), 1));
     };
 
     return [
@@ -65,7 +57,7 @@ export function useAirAnalytics(): AirAnalyticsSummary {
         subIndex: pm25Sub,
         threshold: 15, // WHO 24h Guideline
         status: computeAQICategory(pm25Sub),
-        sparkline: generateSparkline(s.pm25, 6),
+        sparkline: generateSparkline(s.pm25),
       },
       {
         type: PollutantType.PM10,
@@ -74,7 +66,7 @@ export function useAirAnalytics(): AirAnalyticsSummary {
         subIndex: Math.round(s.pm10 * 0.7),
         threshold: 45, // WHO 24h Guideline
         status: computeAQICategory(Math.min(Math.round(s.pm10 * 0.7), 400)),
-        sparkline: generateSparkline(s.pm10, 10),
+        sparkline: generateSparkline(s.pm10),
       },
       {
         type: PollutantType.NO2,
@@ -83,7 +75,7 @@ export function useAirAnalytics(): AirAnalyticsSummary {
         subIndex: Math.round(s.no2 * 1.1),
         threshold: 25, // WHO 24h Guideline
         status: computeAQICategory(Math.min(Math.round(s.no2 * 1.1), 300)),
-        sparkline: generateSparkline(s.no2, 4),
+        sparkline: generateSparkline(s.no2),
       },
       {
         type: PollutantType.CO,
@@ -92,7 +84,7 @@ export function useAirAnalytics(): AirAnalyticsSummary {
         subIndex: Math.round(s.co * 35),
         threshold: 4.0, // WHO 24h Guideline
         status: computeAQICategory(Math.min(Math.round(s.co * 35), 300)),
-        sparkline: generateSparkline(s.co, 0.2),
+        sparkline: generateSparkline(s.co),
       },
       {
         type: PollutantType.O3,
@@ -101,7 +93,7 @@ export function useAirAnalytics(): AirAnalyticsSummary {
         subIndex: Math.round(s.o3 * 0.8),
         threshold: 100, // WHO 8h Guideline
         status: computeAQICategory(Math.min(Math.round(s.o3 * 0.8), 250)),
-        sparkline: generateSparkline(s.o3, 5),
+        sparkline: generateSparkline(s.o3),
       },
     ];
   }, [selectedSector]);

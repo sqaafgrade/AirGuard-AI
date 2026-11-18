@@ -9,6 +9,42 @@ import { useApp } from '@/context/AppContext';
 import { storageService } from '@/services/storageService';
 import type { SmogIncidentReport } from '@/types';
 
+interface VulnerableResident {
+  id: string;
+  name: string;
+  category: 'Asthmatic Child' | 'Elderly Senior Alone' | 'Infant Toddler Home';
+  sectorId: string;
+  assistanceStatus: 'Checked-In' | 'Filter Aid Delivered' | 'Pending Patrol';
+  notes: string;
+}
+
+const INITIAL_VULNERABLE_RESIDENTS: VulnerableResident[] = [
+  {
+    id: 'res-01',
+    name: 'Apt 4B — Reyansh & Family',
+    category: 'Asthmatic Child',
+    sectorId: 'SEC-01',
+    assistanceStatus: 'Checked-In',
+    notes: 'Rescue inhalers verified accessible; bedroom Corsi-Rosenthal fan operating.',
+  },
+  {
+    id: 'res-02',
+    name: 'Block C-12 — Mrs. Sharma (Age 78)',
+    category: 'Elderly Senior Alone',
+    sectorId: 'SEC-02',
+    assistanceStatus: 'Filter Aid Delivered',
+    notes: 'MERV-13 box fan delivered by neighborhood RWA volunteer patrol.',
+  },
+  {
+    id: 'res-03',
+    name: 'Sector 3 East — Patel Infant Home',
+    category: 'Infant Toddler Home',
+    sectorId: 'SEC-03',
+    assistanceStatus: 'Pending Patrol',
+    notes: 'Window weatherstripping assistance requested for nursery room.',
+  },
+];
+
 const INITIAL_INCIDENTS: SmogIncidentReport[] = [
   {
     id: 'inc-01',
@@ -37,6 +73,8 @@ export const VolunteerWatch = memo(function VolunteerWatch() {
     return saved.length > 0 ? saved : INITIAL_INCIDENTS;
   });
 
+  const [residents, setResidents] = useState<VulnerableResident[]>(INITIAL_VULNERABLE_RESIDENTS);
+
   const [type, setType] = useState<SmogIncidentReport['type']>('open-burning');
   const [severity, setSeverity] = useState<SmogIncidentReport['severity']>('High');
   const [description, setDescription] = useState<string>('');
@@ -63,6 +101,23 @@ export const VolunteerWatch = memo(function VolunteerWatch() {
 
     setDescription('');
   }, [type, severity, description, selectedSectorId]);
+
+  const toggleResidentStatus = useCallback((residentId: string) => {
+    setResidents(prev =>
+      prev.map(r => {
+        if (r.id === residentId) {
+          const nextStatus: VulnerableResident['assistanceStatus'] =
+            r.assistanceStatus === 'Pending Patrol'
+              ? 'Checked-In'
+              : r.assistanceStatus === 'Checked-In'
+              ? 'Filter Aid Delivered'
+              : 'Checked-In';
+          return { ...r, assistanceStatus: nextStatus };
+        }
+        return r;
+      })
+    );
+  }, []);
 
   return (
     <section
@@ -210,6 +265,62 @@ export const VolunteerWatch = memo(function VolunteerWatch() {
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* Vulnerable Resident Check-In & Filter Aid Directory (Persona 3 Requirement) */}
+      <div className="bg-slate-950/50 rounded-xl border border-slate-800 p-4 flex flex-col gap-3 mt-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-base" aria-hidden="true">🩺</span>
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+              Vulnerable Resident Smog Check-In & Filter Aid Directory
+            </h3>
+          </div>
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-500/30">
+            RWA Civic Action Active
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {residents.map(res => (
+            <div
+              key={res.id}
+              className="bg-slate-900/60 rounded-xl border border-slate-800 p-3 flex flex-col justify-between gap-2.5"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-bold text-white truncate">{res.name}</span>
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 border border-slate-700">
+                    {res.category}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-300 mt-1">{res.notes}</p>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 border-t border-slate-800">
+                <span
+                  className={`text-[10px] font-bold ${
+                    res.assistanceStatus === 'Checked-In'
+                      ? 'text-emerald-400'
+                      : res.assistanceStatus === 'Filter Aid Delivered'
+                      ? 'text-sky-400'
+                      : 'text-amber-400'
+                  }`}
+                >
+                  ● {res.assistanceStatus}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => toggleResidentStatus(res.id)}
+                  className="px-2 py-1 rounded text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors"
+                >
+                  Update Check-In
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

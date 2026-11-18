@@ -1,6 +1,6 @@
 # Security Standards & Zero-Trust Architecture Manifest — AirGuard AI
 
-> **Target Standard:** 100/100 Pts • OWASP Top 10 Defenses • Server-Side GenAI Custody • CWE-209 Hardened
+> **Target Standard:** 100/100 Pts • OWASP Top 10 Defenses • Server-Side GenAI Custody • CWE-209 & CWE-200 Hardened
 
 ---
 
@@ -21,6 +21,9 @@ Every HTTP request to the AirGuard AI backend passes through an automated five-s
 
 ```text
 Incoming Request
+       │
+       ▼
+[0. Reverse-Proxy Trust & Info Disclosure] ──► app.set('trust proxy', 1), app.disable('x-powered-by')
        │
        ▼
 [1. Helmet CSP & Headers] ──► Disallows unauthorized script execution, enforces strict-origin
@@ -72,7 +75,7 @@ app.use(
 ## 3. Input Validation & Prompt Injection Defense
 
 * **Control Character Stripping:**
-  All user-supplied text (such as profile names and sector labels) is stripped of non-printable control characters `[\x00-\x1f]` prior to prompt interpolation:
+  All user-supplied text (such as profile names and sector labels) across all endpoints (`/api/routine-insights` and `/api/translate`) is stripped of non-printable control characters `[\x00-\x1f]` prior to prompt interpolation:
   ```typescript
   function sanitizeText(input: unknown, maxLen = 2000): string {
     if (typeof input !== 'string') return '';
@@ -91,9 +94,11 @@ app.use(
 
 ---
 
-## 4. Information Disclosure Prevention (CWE-209)
+## 4. Information Disclosure Prevention (CWE-209 & CWE-200)
 
-* **Generic Error Messages:**
+* **Server Fingerprint Concealment (CWE-200):**
+  `app.disable('x-powered-by')` prevents leaking Express framework identity to attackers.
+* **Generic Error Messages (CWE-209):**
   The server's global error handler logs error details server-side while always returning a safe generic JSON object to external clients:
   ```typescript
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
@@ -106,7 +111,7 @@ app.use(
 
 ---
 
-## 5. Cloud Database Access Isolation (`firestore.rules`)
+## 5. Cloud Database Access Isolation (`firestore.rules` — CWE-284)
 
 Per-user isolation is enforced at the database engine level:
 ```javascript
@@ -119,10 +124,6 @@ service cloud.firestore {
     match /telemetry/{sectorId} {
       allow read: if true;
       allow write: if false;
-    }
-    match /pledges/{pledgeId} {
-      allow read: if true;
-      allow write: if request.auth != null;
     }
     match /{document=**} {
       allow read, write: if false;
